@@ -15,4 +15,4 @@ Execute forecast per country: run build_model() function from covid19_model.ipyn
 
 ## License
 
-Licensed under the Apache License, Version 2.0. Copyright 2019 Red Samurai Consulting. [Copy of the license](https://github.com/katanaml/katana-assistant/blob/master/LICENSE).
+Licensed under the Apache License, Version 2.0. Copyright 2019 Red Samurai Consulting. [Copy of the license](https://github.com/katanaml/covid19/blob/master/LICENSE).
