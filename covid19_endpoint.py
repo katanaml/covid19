@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[2]:
+# In[1]:
 
 
 import subprocess
@@ -17,16 +17,21 @@ import numpy as np
 import covid19_model as model
 
 
-# In[3]:
+# In[2]:
 
 
 access_count = 0
+
+def run_training():
+    model.fetch_data()
+    model.detect_growth()
+    model.calculate_forecast
 
 scheduler = BackgroundScheduler()
 scheduler.start()
 
 scheduler.add_job(
-    func=model.calculate_forecast,
+    func=run_training,
     trigger='cron',
     hour='3', 
     minute='00')
@@ -34,7 +39,7 @@ scheduler.add_job(
 atexit.register(lambda: scheduler.shutdown())
 
 
-# In[ ]:
+# In[3]:
 
 
 app = Flask(__name__)
@@ -53,12 +58,20 @@ def forecast():
     result = df.to_json(orient='records', date_format='iso')
     return result
 
+@app.route("/katana-ml/api/v1.0/forecast/covid19/stats", methods=['POST'])
+def stats():
+    df = pd.read_csv('data/covid19_stats_countries.csv', parse_dates=True)
+    df = df.drop(df.columns[[0]], axis=1)
+    
+    result = df.to_json(orient='records', date_format='iso')
+    return result
+
 @app.route("/katana-ml/api/v1.0/forecast/covid19/count", methods=['POST'])
-def g():
+def accecc_count():
     global access_count
     return str(access_count)
 
-# running REST interface port=3000
+# running REST interface port=5001
 if __name__ == "__main__":
-    app.run(debug=False, host='0.0.0.0', port=3000)
+    app.run(debug=False, host='0.0.0.0', port=5001)
 

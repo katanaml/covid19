@@ -19,7 +19,7 @@ import logging
 logging.getLogger('fbprophet').setLevel(logging.WARNING)
 
 
-# In[2]:
+# In[7]:
 
 
 def fetch_data():
@@ -34,10 +34,14 @@ def func_logistic(t, a, b, c):
     return c / (1 + a * np.exp(-b*t))
 
 
-# In[4]:
+# In[10]:
 
 
 def detect_growth():
+    countries_processed = 0
+    countries_stabilized = 0
+    countries_increasing = 0
+    
     df = pd.read_csv('data/covid19_data.csv', parse_dates=True)
     columns = df.columns.values
     for column in columns:
@@ -70,17 +74,25 @@ def detect_growth():
                 res_df['growth_stabilized'] = t_fastest <= x[-1]
                 res_df['timestep'] = x
                 res_df['res_func_logistic'] = func_logistic(x, a, b, c)
-
+            
                 if t_fastest <= x[-1]:
                     print('Growth stabilized:', column, '| Fastest grow day:', t_fastest, '| Infections:', i_fastest)
                     res_df['cap'] = func_logistic(x[-1] + 10, a, b, c)
+                    countries_stabilized += 1
                 else:
                     print('Growth increasing:', column, '| Fastest grow day:', t_fastest, '| Infections:', i_fastest)
                     res_df['cap'] = func_logistic(i_fastest + 10, a, b, c)
+                    countries_increasing += 1
+                
+                countries_processed += 1
                 
                 res_df.to_csv('data/covid19_processed_data_' + column + '.csv')
             except RuntimeError:
                 print('No fit found for: ', column)
+                
+    d = {'countries_processed': [countries_processed], 'countries_stabilized': [countries_stabilized], 'countries_increasing': [countries_increasing]}
+    df_c = pd.DataFrame(data=d)
+    df_c.to_csv('data/covid19_stats_countries.csv')
 
 # detect_growth()
 
