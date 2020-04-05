@@ -32,7 +32,7 @@ def build_country_data(country):
 
 
 def build_covid19_data():
-    request_str = 'https://corona.lmao.ninja/v2/historical'
+    request_str = 'https://corona.lmao.ninja/v2/historical?lastdays=all'
     response = requests.get(request_str)
     json_data = response.json() if response and response.status_code == 200 else None
     

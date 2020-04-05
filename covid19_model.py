@@ -19,7 +19,7 @@ import logging
 logging.getLogger('fbprophet').setLevel(logging.WARNING)
 
 
-# In[7]:
+# In[2]:
 
 
 def fetch_data():
@@ -34,13 +34,15 @@ def func_logistic(t, a, b, c):
     return c / (1 + a * np.exp(-b*t))
 
 
-# In[10]:
+# In[7]:
 
 
 def detect_growth():
     countries_processed = 0
     countries_stabilized = 0
     countries_increasing = 0
+    
+    countries_list = []
     
     df = pd.read_csv('data/covid19_data.csv', parse_dates=True)
     columns = df.columns.values
@@ -85,6 +87,7 @@ def detect_growth():
                     countries_increasing += 1
                 
                 countries_processed += 1
+                countries_list.append(column)
                 
                 res_df.to_csv('data/covid19_processed_data_' + column + '.csv')
             except RuntimeError:
@@ -93,11 +96,14 @@ def detect_growth():
     d = {'countries_processed': [countries_processed], 'countries_stabilized': [countries_stabilized], 'countries_increasing': [countries_increasing]}
     df_c = pd.DataFrame(data=d)
     df_c.to_csv('data/covid19_stats_countries.csv')
+    
+    df_countries = pd.DataFrame(countries_list)
+    df_countries.to_csv('data/covid19_countries_list.csv')
 
 # detect_growth()
 
 
-# In[6]:
+# In[9]:
 
 
 def build_model(country):
@@ -143,7 +149,7 @@ def build_model(country):
 # build_model('Lithuania_cases')
 
 
-# In[21]:
+# In[10]:
 
 
 def calculate_forecast():
