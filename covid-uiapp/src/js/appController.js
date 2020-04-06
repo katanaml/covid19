@@ -117,9 +117,9 @@ define(['ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'knockout', 'o
 
             self.covid19Forecast.removeAll();
             let idCovid19 = 0;
-
+            
             if (fastestGrowthDay < data.length) {
-              fastestGrowthDate = data[fastestGrowthDay].ds;
+              fastestGrowthDate = data[fastestGrowthDay - 1].ds;
             }
             lastDate = new Date(data[0].current_date);
 
