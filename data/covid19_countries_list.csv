@@ -85,7 +85,7 @@
 83,Congo_cases
 84,DRC_cases
 85,Costa Rica_cases
-86,Côte d'Ivoire_cases
+86,Cote d'Ivoire_cases
 87,Croatia_cases
 88,Diamond Princess_cases
 89,Cuba_cases
@@ -238,7 +238,7 @@
 236,Timor-Leste_cases
 237,Belize_cases
 238,Canada_recovered_cases
-239,Lao People's Democratic Republic_cases
+239,"Lao People""s Democratic Republic_cases"
 240,Libyan Arab Jamahiriya_cases
 241,West Bank and Gaza_cases
 242,Guinea-Bissau_cases
@@ -258,3 +258,6 @@
 256,"Netherlands_bonaire, sint eustatius and saba_cases"
 257,Malawi_cases
 258,UK_falkland islands (islas malvinas)_cases
+259,France_saint pierre and miquelon_cases
+260,South Sudan_cases
+261,Western Sahara_cases

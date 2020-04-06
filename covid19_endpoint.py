@@ -58,7 +58,7 @@ def forecast():
     result = df.to_json(orient='records', date_format='iso')
     return result
 
-@app.route("/katana-ml/api/v1.0/forecast/covid19/stats", methods=['POST'])
+@app.route("/katana-ml/api/v1.0/forecast/covid19/stats", methods=['GET'])
 def stats():
     df = pd.read_csv('data/covid19_stats_countries.csv', parse_dates=True)
     df = df.drop(df.columns[[0]], axis=1)
@@ -66,10 +66,18 @@ def stats():
     result = df.to_json(orient='records', date_format='iso')
     return result
 
-@app.route("/katana-ml/api/v1.0/forecast/covid19/count", methods=['POST'])
+@app.route("/katana-ml/api/v1.0/forecast/covid19/count", methods=['GET'])
 def accecc_count():
     global access_count
     return str(access_count)
+
+@app.route("/katana-ml/api/v1.0/forecast/covid19/countries", methods=['GET'])
+def get_countries():
+    df = pd.read_csv('data/covid19_countries_list.csv')
+    df = df.drop(df.columns[[0]], axis=1)
+    
+    result = df.to_json(orient='records', date_format='iso')
+    return result
 
 # running REST interface port=5001
 if __name__ == "__main__":
