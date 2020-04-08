@@ -1,7 +1,7 @@
 # covid19
 COVID-19 Growth Forecast
 
-Web UI: https://app.katanaml.io/covid19/
+Web UI (data is updated daily): https://app.katanaml.io/covid19/
 
 Technology: Python, Prophet
 
@@ -20,6 +20,8 @@ Execute forecast per country: run build_model() function from covid19_model.ipyn
 curl --data "country=Lithuania_cases" https://app.katanaml.io/katana-ml/api/v1.0/forecast/covid19
 
 curl https://app.katanaml.io/katana-ml/api/v1.0/forecast/covid19/countries
+
+curl https://app.katanaml.io/katana-ml/api/v1.0/forecast/covid19/stats
 
 ## License
 
