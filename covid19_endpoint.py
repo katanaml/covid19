@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[2]:
+# In[1]:
 
 
 import subprocess
@@ -17,7 +17,7 @@ import numpy as np
 import covid19_model as model
 
 
-# In[3]:
+# In[2]:
 
 
 access_count = 0
@@ -26,20 +26,20 @@ def run_training():
     model.fetch_data()
     model.detect_growth()
     model.calculate_forecast()
-
+    
 scheduler = BackgroundScheduler()
 scheduler.start()
 
 scheduler.add_job(
     func=run_training,
     trigger='cron',
-    hour='3', 
+    hour='2', 
     minute='00')
 
 atexit.register(lambda: scheduler.shutdown())
 
 
-# In[4]:
+# In[ ]:
 
 
 app = Flask(__name__)
