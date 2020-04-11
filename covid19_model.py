@@ -12,7 +12,7 @@ import math
 import scipy.optimize as optim
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
-
+ 
 import covid19_prepare_data as prepare_data
 
 import logging
@@ -29,22 +29,30 @@ def fetch_data():
 # In[3]:
 
 
-# Define funcion with the coefficients to estimate
+# Define function with the coefficients to estimate
 def func_logistic(t, a, b, c):
     return c / (1 + a * np.exp(-b*t))
 
 
-# In[7]:
+# In[4]:
 
 
-def detect_growth():
+# Hill sigmoidal function
+def func_hill(t, a, b, c):
+    return a * np.power(t, b) / (np.power(c, b) + np.power(t, b)) 
+
+
+# In[5]:
+
+
+def detect_growth(input_file, output_file, backtesting):
     countries_processed = 0
     countries_stabilized = 0
     countries_increasing = 0
     
     countries_list = []
     
-    df = pd.read_csv('data/covid19_data.csv', parse_dates=True)
+    df = pd.read_csv(input_file, parse_dates=True)
     columns = df.columns.values
     for column in columns:
         if column.endswith('_cases'):
@@ -89,52 +97,132 @@ def detect_growth():
                 countries_processed += 1
                 countries_list.append(column)
                 
-                res_df.to_csv('data/covid19_processed_data_' + column + '.csv')
+                res_df.to_csv(output_file + column + '.csv')
             except RuntimeError:
                 print('No fit found for: ', column)
                 
-    d = {'countries_processed': [countries_processed], 'countries_stabilized': [countries_stabilized], 'countries_increasing': [countries_increasing]}
-    df_c = pd.DataFrame(data=d)
-    df_c.to_csv('data/covid19_stats_countries.csv')
-    
-    df_countries = pd.DataFrame(countries_list)
-    df_countries.to_csv('data/covid19_countries_list.csv')
+    if backtesting == False:
+        d = {'countries_processed': [countries_processed], 'countries_stabilized': [countries_stabilized], 'countries_increasing': [countries_increasing]}
+        df_c = pd.DataFrame(data=d)
+        df_c.to_csv('data/covid19_stats_countries.csv')
 
-# detect_growth()
+        df_countries = pd.DataFrame(countries_list)
+        df_countries.to_csv('data/covid19_countries_list.csv')
+
+# detect_growth('data/covid19_data.csv', 'data/covid19_processed_data_', False)
+# detect_growth('data/covid19_data_backtesting.csv', 'data/covid19_processed_backtesting_data_', True)
 
 
-# In[9]:
+# In[10]:
+
+
+def construct_hill_growth(input_file, country, backtesting):
+    df = pd.read_csv(input_file, parse_dates=True)
+    columns = df.columns.values
+    for column in columns:
+        if column == country:
+            data = pd.DataFrame(df[column].values)
+            
+            data = data.reset_index(drop=False)
+            data.columns = ['Timestep', 'Total Cases']
+            
+            # Randomly initialize the coefficients
+            p0 = np.random.exponential(size=3)
+
+            # Set min bound 0 on all coefficients, and set different max bounds for each coefficient
+            bounds = (0, [1000000., 100., 1000.])
+
+            # Convert pd.Series to np.Array and use Scipy's curve fit to find the best Nonlinear Least Squares coefficients
+            x = np.array(data['Timestep']) + 1
+            y = np.array(data['Total Cases'])
+            
+            try:
+                (a,b,c),cov = optim.curve_fit(func_hill, x, y, bounds=bounds, p0=p0, maxfev=1000)
+                horizon = 21
+                if backtesting == True:
+                    horizon = 26
+                for day in range(x[-1] + 1, x[-1] + horizon):
+                    x = np.append(x, day)
+                
+                res_df = df[['Report_Date']].copy()
+                future_range = pd.date_range(df['Report_Date'].iloc[-1], periods=horizon, freq='D')
+                future_columns = {'Report_Date': future_range.strftime('%Y-%m-%d')}
+                future_df = pd.DataFrame(future_columns)
+                future_df = future_df.iloc[1:]
+                res_df = res_df.append(future_df)
+
+                res_df['y_hill'] = func_hill(x, a, b, c)
+                res_df.columns = ['ds', 'y_hill']
+                if backtesting == True:
+                    res_df.columns = ['ds', 'y_hill_b1']
+                
+                return res_df
+            except RuntimeError:
+                print('No fit found for: ', column)
+            return None
+
+# construct_hill_growth('data/covid19_data.csv', 'Lithuania_cases')
+
+
+# In[16]:
 
 
 def build_model(country):
-    df = pd.read_csv('data/covid19_processed_data_' + country + '.csv', parse_dates=True)
-    df_ = df.copy()
-    df = df[['Report_Date', country, 'cap']].dropna()
-    
-    df.columns = ['ds', 'y', 'cap']
-    
-    m = Prophet(growth="logistic")
-    m.fit(df)
+    try:
+        df = pd.read_csv('data/covid19_processed_data_' + country + '.csv', parse_dates=True)
+        forecast_b1 = None
+        try:
+            df_b1 = pd.read_csv('data/covid19_processed_backtesting_data_' + country + '.csv', parse_dates=True)
+            df_b1 = df_b1[['Report_Date', country, 'cap']].dropna()
+            df_b1.columns = ['ds', 'y', 'cap']
+            m_b1 = Prophet(growth="logistic")
+            m_b1.fit(df_b1)
+            future_b1 = m_b1.make_future_dataframe(periods=25)
+            future_b1['cap'] = df_b1['cap'].iloc[0]
+            forecast_b1 = m_b1.predict(future_b1)
+            forecast_b1 = forecast_b1[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].dropna()
+            forecast_b1.columns = ['ds', 'yhat_b1', 'yhat_b1_lower', 'yhat_b1_upper']
+        except FileNotFoundError:
+            print('Skipping backtesing:', country)
+            
+        df_ = df.copy()
+        df = df[['Report_Date', country, 'cap']].dropna()
+        df.columns = ['ds', 'y', 'cap']
 
-    future = m.make_future_dataframe(periods=20)
-    future['cap'] = df['cap'].iloc[0]
+        m = Prophet(growth="logistic")
+        m.fit(df)
 
-    forecast = m.predict(future)
-    
-    res_df = forecast.set_index('ds')[['yhat', 'yhat_lower', 'yhat_upper']].join(df.set_index('ds').y).reset_index()
-    res_df['current_date'] = df['ds'].iloc[-1]
-    res_df['fastest_growth_day'] = df_['fastest_grow_day'].iloc[-1]
-    res_df['growth_stabilized'] = df_['growth_stabilized'].iloc[-1]
-    res_df['current_day'] = df_['timestep'].iloc[-1]
-    res_df['cap'] = df['cap'].iloc[0]
-    
-    res_df.to_csv('data/covid19_forecast_data_' + country + '.csv')
-    
-    print('Processed:', country)
+        future = m.make_future_dataframe(periods=20)
+        future['cap'] = df['cap'].iloc[0]
+        forecast = m.predict(future)
+
+        res_df = forecast.set_index('ds')[['yhat', 'yhat_lower', 'yhat_upper']].join(df.set_index('ds').y).reset_index()
+
+        res_hill = construct_hill_growth('data/covid19_data.csv', country, False)
+        if res_hill is not None:
+            res_df = res_df.set_index('ds')[['yhat', 'yhat_lower', 'yhat_upper', 'y']].join(res_hill.set_index('ds')[['y_hill']]).reset_index()
+        res_hill_b1 = construct_hill_growth('data/covid19_data_backtesting.csv', country, True)
+        if res_hill_b1 is not None:
+            res_df = res_df.set_index('ds')[['yhat', 'yhat_lower', 'yhat_upper', 'y', 'y_hill']].join(res_hill_b1.set_index('ds')[['y_hill_b1']]).reset_index()
+
+        if forecast_b1 is not None:
+            res_df = res_df.set_index('ds')[['yhat', 'yhat_lower', 'yhat_upper', 'y', 'y_hill', 'y_hill_b1']].join(forecast_b1.set_index('ds')[['yhat_b1', 'yhat_b1_lower', 'yhat_b1_upper']]).reset_index()
+        
+        res_df['current_date'] = df['ds'].iloc[-1]
+        res_df['fastest_growth_day'] = df_['fastest_grow_day'].iloc[-1]
+        res_df['growth_stabilized'] = df_['growth_stabilized'].iloc[-1]
+        res_df['current_day'] = df_['timestep'].iloc[-1]
+        res_df['cap'] = df['cap'].iloc[0]
+
+        res_df.to_csv('data/covid19_forecast_data_' + country + '.csv')
+
+        print('Processed:', country)
+    except FileNotFoundError:
+        print('Skipping:', country)
     
 #     fig1 = m.plot(forecast)
 #     fig1.set_size_inches(18.5, 8.5)
-#     datenow = datetime(2020, 4, 1)
+#     datenow = datetime(2020, 4, 5)
 #     dateend = datenow + timedelta(days=20)
 #     datestart = dateend - timedelta(days=71)
 #     plt.xlim([datestart, dateend])
@@ -149,7 +237,7 @@ def build_model(country):
 # build_model('Lithuania_cases')
 
 
-# In[10]:
+# In[17]:
 
 
 def calculate_forecast():

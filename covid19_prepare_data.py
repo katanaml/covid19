@@ -28,7 +28,7 @@ def build_country_data(country):
     return res
 
 
-# In[11]:
+# In[5]:
 
 
 def build_covid19_data():
@@ -52,10 +52,14 @@ def build_covid19_data():
             df = df.merge(df_new, left_index=True, right_index=True)
     
     df.to_csv('data/covid19_data.csv')
+    
+    df_backtesting = df.iloc[:-5]
+    df_backtesting.to_csv('data/covid19_data_backtesting.csv')
+    
     return df
 
 
-# In[12]:
+# In[6]:
 
 
 # df = build_covid19_data()

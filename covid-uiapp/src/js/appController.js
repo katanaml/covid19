@@ -11,7 +11,7 @@ define(['ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'knockout', 'o
   function (ResponsiveUtils, ResponsiveKnockoutUtils, ko, ArrayDataProvider, DateTimeConverter) {
     function ControllerViewModel() {
       var self = this;
-      let baseURL = 'http://127.0.0.1:3000/katana-ml/api/v1.0/forecast/covid19';
+      let baseURL = 'https://app.katanaml.io/katana-ml/api/v1.0/forecast/covid19';
 
       let dateConverter = new DateTimeConverter.IntlDateTimeConverter(
         {
@@ -53,8 +53,8 @@ define(['ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'knockout', 'o
 
           response.json().then(function (data) {
             self.covidSummary.removeAll();
-            self.covidSummary.push({ "id": 1, "series": "Countries COVID19 Stabilized", "group": "Countries total: " + data[0].countries_processed, "value": data[0].countries_stabilized });
-            self.covidSummary.push({ "id": 2, "series": "Countries COVID 19 Increasing", "group": "Countries total: " + data[0].countries_processed, "value": data[0].countries_increasing });
+            self.covidSummary.push({ "id": 1, "series": "Countries COVID-19 Stabilized", "group": "Countries total: " + data[0].countries_processed, "value": data[0].countries_stabilized });
+            self.covidSummary.push({ "id": 2, "series": "Countries COVID-19 Increasing", "group": "Countries total: " + data[0].countries_processed, "value": data[0].countries_increasing });
           });
         })
       }
@@ -102,6 +102,7 @@ define(['ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'knockout', 'o
 
           response.json().then(function (data) {
             let itemsRangeForecastProphet = [];
+            let itemsRangeForecastProphetBacktest = [];
             let fastestGrowthDay = Math.round(data[0].fastest_growth_day);
             let fastestGrowthDate = null;
             self.lastAvailableDate(dateConverter.format(data[0].current_date));
@@ -117,7 +118,7 @@ define(['ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'knockout', 'o
 
             self.covid19Forecast.removeAll();
             let idCovid19 = 0;
-            
+
             if (fastestGrowthDay < data.length) {
               fastestGrowthDate = data[fastestGrowthDay - 1].ds;
             }
@@ -134,7 +135,7 @@ define(['ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'knockout', 'o
               fastestGrowthDate = new Date(fastestGrowthDate);
               let constantLineX = {
                 referenceObjects: [
-                  { text: 'Last Available Day', type: 'line', value: lastDate, color: '#000000', displayInLegend: 'on', lineWidth: 1, location: 'back', lineStyle: 'dashed', shortDesc: 'Last Available Day' },
+                  { text: 'Last Available Day', type: 'line', value: lastDate, color: '#000000', displayInLegend: 'on', lineWidth: 2, location: 'back', lineStyle: 'dashed', shortDesc: 'Last Available Day' },
                   { text: 'Fastest Growth Day', type: 'line', value: fastestGrowthDate, color: '#cc3232', displayInLegend: 'on', lineWidth: 2, location: 'back', lineStyle: 'line', shortDesc: 'Fastest Growth Day' }
                 ]
               };
@@ -142,21 +143,33 @@ define(['ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'knockout', 'o
             }
 
             data.forEach(function (item) {
-              self.covid19Forecast.push({ "id": idCovid19, "date": item.ds, "series": "Forecast", "value": item.yhat });
-              idCovid19 = idCovid19 + 1;
-              self.covid19Forecast.push({ "id": idCovid19, "date": item.ds, "series": "Actual Infections", "value": item.y });
-              idCovid19 = idCovid19 + 1;
-              itemsRangeForecastProphet.push({ low: item.yhat_lower, high: item.yhat_upper });
+              if (item.y > 0 || item.y === null) {
+                self.covid19Forecast.push({ "id": idCovid19, "date": item.ds, "series": "Forecast Logistic", "value": item.yhat });
+                idCovid19 = idCovid19 + 1;
+                self.covid19Forecast.push({ "id": idCovid19, "date": item.ds, "series": "Forecast Logistic Backtest", "value": item.yhat_b1 });
+                idCovid19 = idCovid19 + 1;
+                self.covid19Forecast.push({ "id": idCovid19, "date": item.ds, "series": "Forecast Hill", "value": item.y_hill });
+                idCovid19 = idCovid19 + 1;
+                self.covid19Forecast.push({ "id": idCovid19, "date": item.ds, "series": "Forecast Hill Backtest", "value": item.y_hill_b1 });
+                idCovid19 = idCovid19 + 1;
+                self.covid19Forecast.push({ "id": idCovid19, "date": item.ds, "series": "Actual Infections", "value": item.y });
+                idCovid19 = idCovid19 + 1;
+                itemsRangeForecastProphet.push({ low: item.yhat_lower, high: item.yhat_upper });
+                itemsRangeForecastProphetBacktest.push({ low: item.yhat_b1_lower, high: item.yhat_b1_upper });
+              }
             });
 
             var variedAreaForecastY = {
               baselineScaling: 'min',
               referenceObjects: [{
-                  text: 'Forecast Range', type: 'area', items: itemsRangeForecastProphet, color: '#e7b416', displayInLegend: 'on', location: 'back', shortDesc: 'Forecast Range'
-                }, 
-                { 
-                  text: 'Expected Maximum', type: 'line', value: expectedTop, color: '#000000', displayInLegend: 'on', lineWidth: 1, location: 'back', lineStyle: 'dashed', shortDesc: 'Expected Maximum' 
-                }]
+                text: 'Forecast Range', type: 'area', items: itemsRangeForecastProphet, color: '#f7e4d4', displayInLegend: 'on', location: 'back', shortDesc: 'Forecast Range'
+              },
+              {
+                text: 'Forecast Range Backtest', type: 'area', items: itemsRangeForecastProphetBacktest, color: '#f7e4d4', displayInLegend: 'on', location: 'back', shortDesc: 'Forecast Range Backtest'
+              },
+              {
+                text: 'Expected Maximum', type: 'line', value: expectedTop, color: '#000000', displayInLegend: 'on', lineWidth: 1, location: 'back', lineStyle: 'dashed', shortDesc: 'Expected Maximum'
+              }]
             };
             self.yAxisDataForecast(variedAreaForecastY);
 
@@ -174,7 +187,9 @@ define(['ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'knockout', 'o
         this.linkTarget = linkTarget;
       }
       self.footerLinks = ko.observableArray([
-        new footerLink('About Katana ML', 'aboutKatana', 'https://katanaml.io/')
+        new footerLink('About Katana ML', 'aboutKatana', 'https://katanaml.io/'),
+        new footerLink('GitHub', 'github', 'https://github.com/katanaml/covid19'),
+        new footerLink('NovelCOVID API', 'dataAPI', 'https://github.com/novelcovid/api')
       ]);
     }
 

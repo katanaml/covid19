@@ -40,12 +40,14 @@
       <h2 class="oj-header-border">DESCRIPTION</h2>
       COVID-19 is a hot topic these days. Healthcare workers are the first line of defense. If you are in IT you are
       part of the fight against the virus. I thought I should do my part and implement a method to forecast coronavirus
-      growth and dates when the number of infections could stabilize.
+      growth and dates when the number of infections could stabilize. Forecast is calculated based on last available
+      data, using logistic and Hill functions. Calculation is done daily, when new infections data is available.
+      Backtesting is done by forecasting from 5 days in the past.
       <br /><br />
       <h2 class="oj-header-border" data-bind="text: headerTitle"></h2>
       <oj-chart id="perCountry" type="bar" orientation="horizontal" stack="on" data="[[dataProviderSummary]]"
-        animation-on-display="auto" animation-on-data-change="auto" hover-behavior="dim"
-        style="width:100%;height:100px;">
+        animation-on-display="auto" animation-on-data-change="auto" hover-behavior="dim" legend.position="bottom"
+        style="width:100%;height:130px;">
         <template slot='itemTemplate' data-oj-as='item'>
           <oj-chart-item value='[[item.data.value]]' group-id='[[ [item.data.group] ]]'
             series-id='[[item.data.series]]'>
@@ -53,11 +55,11 @@
         </template>
         <template slot="seriesTemplate" data-oj-as="series">
           <oj-chart-series
-            color="[[series.id === 'Countries COVID19 Stabilized' ? '#e7b416': series.id === 'Countries COVID 19 Increasing' ? '#cc3232': null]]">
+            color="[[series.id === 'Countries COVID-19 Stabilized' ? '#e7b416': series.id === 'Countries COVID-19 Increasing' ? '#cc3232': null]]">
           </oj-chart-series>
         </template>
       </oj-chart>
-      <br /><br />
+      <br />
       <h2 class="oj-header-border">FORECAST</h2>
       <div class="oj-flex-bar">
         <div class="oj-flex-bar-start">
@@ -78,18 +80,29 @@
       <hr />
       <oj-chart id="chartForecast" type="line" data="[[covid19ForecastDataProvider]]" animation-on-display="auto"
         data-cursor="on" animation-on-data-change="auto" zoom-and-scroll="live" time-axis-type="enabled"
-        x-axis="[[xAxisData]]" y-axis="[[yAxisDataForecast]]" style="width:100%;height:350px;" hover-behavior="dim"
-        hide-and-show-behavior="withRescale">
+        x-axis="[[xAxisData]]" y-axis="[[yAxisDataForecast]]" style="width:100%;height:500px;" hover-behavior="dim"
+        hide-and-show-behavior="withRescale" legend.position="bottom">
         <template slot="itemTemplate" data-oj-as="item">
           <oj-chart-item value="[[item.data.value]]" group-id="[[ [item.data.date] ]]" series-id="[[item.data.series]]">
           </oj-chart-item>
         </template>
         <template slot="seriesTemplate" data-oj-as="series">
           <oj-chart-series
-            color="[[series.id === 'Actual Infections' ? '#cc3232' : series.id === 'Forecast' ? '#db7b2b' : null]]">
+            color="[[series.id === 'Actual Infections' ? '#cc3232' : series.id === 'Forecast Logistic' ? '#db7b2b' : series.id === 'Forecast Hill' ? '#b89011' : series.id === 'Forecast Hill Backtest' ? '#b89011' : series.id === 'Forecast Logistic Backtest' ? '#db7b2b' : null]]"
+            line-style="[[series.id === 'Forecast Hill Backtest' ? 'dashed': series.id === 'Forecast Logistic Backtest' ? 'dashed': null]]">
           </oj-chart-series>
         </template>
       </oj-chart>
+      <br />
+      <h2 class="oj-header-border">INSTRUCTIONS</h2>
+      <ul>
+        <li>Two equations are being using to forecast COVID-19 infections - Logistic and Hill</li>
+        <li>Logistic equation is being used indirectly to calculate fastest growth day and expected top. Logistic curve is calculated using FB Prophet</li>
+        <li>Backtesting is done by forecasting from 5 days in the past</li>
+        <li>If current forecast is above backtesting forecast, this means previous forecast was too optimistic</li>
+        <li>If current forecast is below backtesting forecast, this means previous forecast was too pessimistc</li>
+      </ul>
+      <br />
     </div>
     <footer class="oj-web-applayout-footer" role="contentinfo">
       <div class="oj-web-applayout-footer-item oj-web-applayout-max-width">
