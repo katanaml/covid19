@@ -11,11 +11,7 @@ Author: Katana, Red Samurai Consulting, Andrej Baranovskij
 
 ## Instructions
 
-Fetch latest data: run fetch_data() function from covid19_model.ipynb
-
-Detect growth rates for all countries: run detect_growth() function from covid19_model.ipynb
-
-Execute forecast per country: run build_model() function from covid19_model.ipynb
+See covid19_endpoint.py, functio run_training is responsible to execute re-training
 
 ## API
 
