@@ -3,7 +3,7 @@ COVID-19 Growth Forecast
 
 Web UI (data is updated daily): https://app.katanaml.io/covid19/
 
-Article: https://medium.com/@andrejusb/covid-19-growth-modeling-and-forecasting-with-prophet-2ff5ebd00c01
+Article: https://medium.com/katanaml/covid-19-growth-modeling-and-forecasting-with-prophet-2ff5ebd00c01
 
 Technology: Python, Prophet
 
@@ -11,11 +11,7 @@ Author: Katana, Red Samurai Consulting, Andrej Baranovskij
 
 ## Instructions
 
-Fetch latest data: run fetch_data() function from covid19_model.ipynb
-
-Detect growth rates for all countries: run detect_growth() function from covid19_model.ipynb
-
-Execute forecast per country: run build_model() function from covid19_model.ipynb
+See covid19_endpoint.py, function run_training is responsible to execute re-training
 
 ## API
 
