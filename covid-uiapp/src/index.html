@@ -46,7 +46,7 @@
       <br /><br />
       <h2 class="oj-header-border" data-bind="text: headerTitle"></h2>
       <oj-chart id="perCountry" type="bar" orientation="horizontal" stack="on" data="[[dataProviderSummary]]"
-        animation-on-display="auto" animation-on-data-change="auto" hover-behavior="dim" legend.position="bottom"
+        animation-on-display="auto" animation-on-data-change="auto" hover-behavior="dim"
         style="width:100%;height:130px;">
         <template slot='itemTemplate' data-oj-as='item'>
           <oj-chart-item value='[[item.data.value]]' group-id='[[ [item.data.group] ]]'
@@ -81,7 +81,7 @@
       <oj-chart id="chartForecast" type="line" data="[[covid19ForecastDataProvider]]" animation-on-display="auto"
         data-cursor="on" animation-on-data-change="auto" zoom-and-scroll="live" time-axis-type="enabled"
         x-axis="[[xAxisData]]" y-axis="[[yAxisDataForecast]]" style="width:100%;height:500px;" hover-behavior="dim"
-        hide-and-show-behavior="withRescale" legend.position="bottom">
+        hide-and-show-behavior="withRescale">
         <template slot="itemTemplate" data-oj-as="item">
           <oj-chart-item value="[[item.data.value]]" group-id="[[ [item.data.date] ]]" series-id="[[item.data.series]]">
           </oj-chart-item>
