@@ -3,6 +3,8 @@ COVID-19 Growth Forecast
 
 Web UI (data is updated daily): https://app.katanaml.io/covid19/
 
+Article: https://medium.com/@andrejusb/covid-19-growth-modeling-and-forecasting-with-prophet-2ff5ebd00c01
+
 Technology: Python, Prophet
 
 Author: Katana, Red Samurai Consulting, Andrej Baranovskij
