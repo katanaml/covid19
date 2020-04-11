@@ -11,7 +11,7 @@ Author: Katana, Red Samurai Consulting, Andrej Baranovskij
 
 ## Instructions
 
-See covid19_endpoint.py, functio run_training is responsible to execute re-training
+See covid19_endpoint.py, function run_training is responsible to execute re-training
 
 ## API
 
