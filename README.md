@@ -4,6 +4,7 @@ COVID-19 Growth Forecast
 Web UI (data is updated daily): https://app.katanaml.io/covid19/
 
 Article I: https://medium.com/katanaml/covid-19-growth-modeling-and-forecasting-with-prophet-2ff5ebd00c01
+
 Article II: https://medium.com/katanaml/covid-19-growth-modeling-forecasting-with-logistic-hill-equations-and-prophet-8b9937152f5
 
 Technology: Python, Prophet
