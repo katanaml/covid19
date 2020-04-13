@@ -25,4 +25,4 @@ curl https://app.katanaml.io/katana-ml/api/v1.0/forecast/covid19/stats
 
 ## License
 
-Licensed under the Apache License, Version 2.0. Copyright 2019 Red Samurai Consulting. [Copy of the license](https://github.com/katanaml/covid19/blob/master/LICENSE).
+Licensed under the Apache License, Version 2.0. Copyright 2020 Katana ML. [Copy of the license](https://github.com/katanaml/covid19/blob/master/LICENSE).
