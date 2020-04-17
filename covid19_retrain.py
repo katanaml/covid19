@@ -4,13 +4,10 @@
 # In[1]:
 
 
-from apscheduler.schedulers.blocking import BlockingScheduler
-import sys
-
 import covid19_model as model
 
 
-# In[2]:
+# In[ ]:
 
 
 def run_training():
@@ -19,14 +16,5 @@ def run_training():
     model.detect_growth('data/covid19_data_backtesting.csv', 'data/covid19_processed_backtesting_data_', True)
     model.calculate_forecast()
     
-scheduler = BlockingScheduler()
-scheduler.start()
-
-scheduler.add_job(
-    func=run_training,
-    trigger='cron',
-    hour='1', 
-    minute='00')
-
-atexit.register(lambda: scheduler.shutdown())
+run_training()
 
