@@ -13,7 +13,11 @@ Author: Katana, Red Samurai Consulting, Andrej Baranovskij
 
 ## Instructions
 
-See covid19_endpoint.py, function run_training is responsible to execute re-training
+covid19_endpoint.py - Flask endpoint
+
+covid19_scheduler.py - Re-training scheduler
+
+covid19_model.py - model construction
 
 ## API
 
