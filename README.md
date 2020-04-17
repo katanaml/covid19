@@ -3,9 +3,11 @@ COVID-19 Growth Forecast
 
 Web UI (data is updated daily): https://app.katanaml.io/covid19/
 
-Article I: https://medium.com/katanaml/covid-19-growth-modeling-and-forecasting-with-prophet-2ff5ebd00c01
+Katana ML Docker container with backend code: https://hub.docker.com/r/katanaml/light-runtime
 
-Article II: https://medium.com/katanaml/covid-19-growth-modeling-forecasting-with-logistic-hill-equations-and-prophet-8b9937152f5
+Article I: https://bit.ly/2XHjL4P
+
+Article II: https://bit.ly/2RMB14V
 
 Technology: Python, Prophet
 
