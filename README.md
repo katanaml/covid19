@@ -25,11 +25,11 @@ covid19_model.py - model construction
 
 ## API
 
-curl --data "country=Lithuania_cases" https://app.katanaml.io/katana-ml/api/v1.0/forecast/covid19
+(POST) curl --data "country=Lithuania_cases" https://app.katanaml.io/katana-ml/api/v1.0/forecast/covid19
 
-curl https://app.katanaml.io/katana-ml/api/v1.0/forecast/covid19/countries
+(GET) curl https://app.katanaml.io/katana-ml/api/v1.0/forecast/covid19/countries
 
-curl https://app.katanaml.io/katana-ml/api/v1.0/forecast/covid19/stats
+(GET) curl https://app.katanaml.io/katana-ml/api/v1.0/forecast/covid19/stats
 
 ## License
 
