@@ -9,7 +9,7 @@ Article I: https://bit.ly/2XHjL4P
 
 Article II: https://bit.ly/2RMB14V
 
-About: Forecast is based on two equations: Logistic and Hill. Both generate sigmoid, Hill in most of the cases generate better result, it is producing not symetric sigmoid. Backtesting is done for both methods by forecasting from five days in the past. If backesting forecast is above current forecast, means current situation is better than it was forecasted. If backesting forecast is below current forecast, means current situation is worse than it was forecasted.
+About: The forecast is based on two equations: Logistic and Hill. Both generate sigmoid, Hill in most of the cases generate a better result, it is producing not symmetric sigmoid. Backtesting is done for both methods by forecasting for five days in the past. If the backtesting forecast is above the current forecast, means the current situation is better than it was forecasted. If the backtesting forecast is below the current forecast, means the current situation is worse than it was forecasted..
 
 Technology: Python, Prophet
 
