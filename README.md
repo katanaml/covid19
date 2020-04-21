@@ -3,9 +3,13 @@ COVID-19 Growth Forecast
 
 Web UI (data is updated daily): https://app.katanaml.io/covid19/
 
-Article I: https://medium.com/katanaml/covid-19-growth-modeling-and-forecasting-with-prophet-2ff5ebd00c01
+Katana ML Docker container with backend code: https://hub.docker.com/r/katanaml/light-runtime
 
-Article II: https://medium.com/katanaml/covid-19-growth-modeling-forecasting-with-logistic-hill-equations-and-prophet-8b9937152f5
+Article I: https://bit.ly/2XHjL4P
+
+Article II: https://bit.ly/2RMB14V
+
+About: Forecast is based on two equations: Logistic and Hill. Both generate sigmoid, Hill in most of the cases generate better result, it is producing not symetric sigmoid. Backtesting is done for both methods by forecasting from five days in the past. If backesting forecast is above current forecast, means current situation is better than it was forecasted. If backesting forecast is below current forecast, means current situation is worse than it was forecasted.
 
 Technology: Python, Prophet
 
@@ -21,11 +25,11 @@ covid19_model.py - model construction
 
 ## API
 
-curl --data "country=Lithuania_cases" https://app.katanaml.io/katana-ml/api/v1.0/forecast/covid19
+(POST) curl --data "country=Lithuania_cases" https://app.katanaml.io/katana-ml/api/v1.0/forecast/covid19
 
-curl https://app.katanaml.io/katana-ml/api/v1.0/forecast/covid19/countries
+(GET) curl https://app.katanaml.io/katana-ml/api/v1.0/forecast/covid19/countries
 
-curl https://app.katanaml.io/katana-ml/api/v1.0/forecast/covid19/stats
+(GET) curl https://app.katanaml.io/katana-ml/api/v1.0/forecast/covid19/stats
 
 ## License
 
