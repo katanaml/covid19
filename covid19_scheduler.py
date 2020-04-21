@@ -20,13 +20,12 @@ def run_training():
     model.calculate_forecast()
     
 scheduler = BlockingScheduler()
-scheduler.start()
-
 scheduler.add_job(
     func=run_training,
     trigger='cron',
     hour='1', 
     minute='00')
+scheduler.start()
 
 atexit.register(lambda: scheduler.shutdown())
 

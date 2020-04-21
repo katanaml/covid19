@@ -72,7 +72,7 @@ def detect_growth(input_file, output_file, backtesting):
             y = np.array(data['Total Cases'])
             
             try:
-                (a,b,c),cov = optim.curve_fit(func_logistic, x, y, bounds=bounds, p0=p0, maxfev=1000000)
+                (a,b,c),cov = optim.curve_fit(func_logistic, x, y, bounds=bounds, p0=p0, maxfev=100000)
                 
                 # The time step at which the growth is fastest
                 t_fastest = np.log(a) / b
