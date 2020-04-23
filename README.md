@@ -23,6 +23,25 @@ covid19_scheduler.py - Re-training scheduler
 
 covid19_model.py - model construction
 
+## UI Instructions
+
+UI in folder covid-uiapp is implemented with Oracle JET (https://www.oracle.com/webfolder/technetwork/jet/index.html) open-source JavaScript toolkit, which is based on Open-Source JavaScript libraries such as Knockout, RequireJS, JQuery, etc.
+
+You must have Node.js installed, install Oracle JET as Node.js library (https://www.oracle.com/webfolder/technetwork/jet/globalGetStarted.html):
+
+```
+npm install -g @oracle/ojet-cli
+```
+Go to covid-uiapp folder and run these commands to start UI locally (make sure baseURL is set correctly in appController.js):
+
+```
+ojet restore
+```
+```
+ojet serve
+```
+If you want to run Oracle JET UI app on the server, you can wrap it into Node.js app and deploy with Docker container. Explanation here: http://andrejusb.blogspot.com/2019/09/running-oracle-jet-in-oracle-cloud-free.html
+
 ## API
 
 (POST) curl --data "country=Lithuania_cases" https://app.katanaml.io/katana-ml/api/v1.0/forecast/covid19
