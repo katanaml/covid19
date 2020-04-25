@@ -9,7 +9,7 @@ Article I: https://bit.ly/2XHjL4P
 
 Article II: https://bit.ly/2RMB14V
 
-About: Forecast is based on two equations: Logistic and Hill. Both generate sigmoid, Hill in most of the cases generate better result, it is producing not symetric sigmoid. Backtesting is done for both methods by forecasting from five days in the past. If backesting forecast is above current forecast, means current situation is better than it was forecasted. If backesting forecast is below current forecast, means current situation is worse than it was forecasted.
+About: The forecast is based on two equations: Logistic and Hill. Both generate sigmoid, Hill in most of the cases generate a better result, it is producing not symmetric sigmoid. Backtesting is done for both methods by forecasting for five days in the past. If the backtesting forecast is above the current forecast, means the current situation is better than it was forecasted. If the backtesting forecast is below the current forecast, means the current situation is worse than it was forecasted..
 
 Technology: Python, Prophet
 
@@ -22,6 +22,25 @@ covid19_endpoint.py - Flask endpoint
 covid19_scheduler.py - Re-training scheduler
 
 covid19_model.py - model construction
+
+## UI Instructions
+
+UI in folder covid-uiapp is implemented with Oracle JET (https://www.oracle.com/webfolder/technetwork/jet/index.html) open-source JavaScript toolkit, which is based on Open-Source JavaScript libraries such as Knockout, RequireJS, JQuery, etc.
+
+You must have Node.js installed, install Oracle JET as Node.js library (https://www.oracle.com/webfolder/technetwork/jet/globalGetStarted.html):
+
+```
+npm install -g @oracle/ojet-cli
+```
+Go to covid-uiapp folder and run these commands to start UI locally (make sure baseURL is set correctly in appController.js):
+
+```
+ojet restore
+```
+```
+ojet serve
+```
+If you want to run Oracle JET UI app on the server, you can wrap it into Node.js app and deploy with Docker container. Explanation here: http://andrejusb.blogspot.com/2019/09/running-oracle-jet-in-oracle-cloud-free.html
 
 ## API
 
