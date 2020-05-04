@@ -1,9 +1,9 @@
 # covid19
 COVID-19 Growth Forecast
 
-Web UI (data is updated daily): https://app.katanaml.io/covid19/
+**EUvsVirus Winners**: COVID-19 Forecasting team, Social & Political Cohesion, https://euvsvirus.org/results/
 
-*Winners*: COVID-19 Forecasting team, Social & Political Cohesion, https://euvsvirus.org/results/
+Web UI (data is updated daily): https://app.katanaml.io/covid19/
 
 Katana ML Docker container with backend code: https://hub.docker.com/r/katanaml/light-runtime
 
