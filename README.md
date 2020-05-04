@@ -3,6 +3,8 @@ COVID-19 Growth Forecast
 
 Web UI (data is updated daily): https://app.katanaml.io/covid19/
 
+*Winners*: COVID-19 Forecasting team, Social & Political Cohesion, https://euvsvirus.org/results/
+
 Katana ML Docker container with backend code: https://hub.docker.com/r/katanaml/light-runtime
 
 Article I: https://bit.ly/2XHjL4P
@@ -14,8 +16,6 @@ About: The forecast is based on two equations: Logistic and Hill. Both generate 
 Technology: Python, Prophet
 
 Author: Katana, Red Samurai Consulting, Andrej Baranovskij
-
-*Winners*: Social & Political Cohesion, https://euvsvirus.org/results/
 
 ## Instructions
 
