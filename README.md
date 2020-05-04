@@ -15,6 +15,8 @@ Technology: Python, Prophet
 
 Author: Katana, Red Samurai Consulting, Andrej Baranovskij
 
+*Winners*: Social & Political Cohesion, https://euvsvirus.org/results/
+
 ## Instructions
 
 covid19_endpoint.py - Flask endpoint
