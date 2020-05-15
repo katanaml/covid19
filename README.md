@@ -1,5 +1,6 @@
-# covid19
-COVID-19 Growth Forecast
+# COVID-19 Growth Forecast
+
+**EUvsVirus Winners**: COVID-19 Forecasting team, Social & Political Cohesion, https://euvsvirus.org/results/
 
 Web UI (data is updated daily): https://app.katanaml.io/covid19/
 
