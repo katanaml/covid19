@@ -130,7 +130,11 @@ def construct_hill_growth(input_file, country, backtesting):
             p0 = np.random.exponential(size=3)
 
             # Set min bound 0 on all coefficients, and set different max bounds for each coefficient
-            bounds = (0, [1000000., 100., 1000.])
+            coeff1 = 1000000.
+            if country == 'USA_cases':
+                coeff1 = 1000000000.
+                
+            bounds = (0, [coeff1, 100., 1000.])
 
             # Convert pd.Series to np.Array and use Scipy's curve fit to find the best Nonlinear Least Squares coefficients
             x = np.array(data['Timestep']) + 1
