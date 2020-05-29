@@ -42,7 +42,7 @@ def func_hill(t, a, b, c):
     return a * np.power(t, b) / (np.power(c, b) + np.power(t, b)) 
 
 
-# In[5]:
+# In[14]:
 
 
 def detect_growth(input_file, output_file, backtesting):
@@ -79,6 +79,11 @@ def detect_growth(input_file, output_file, backtesting):
                 i_fastest = func_logistic(t_fastest, a, b, c)
                 
                 res_df = df[['Report_Date', column]].copy()
+                
+                if backtesting == False:
+                    country = column.rsplit('_', 1)[0]
+                    res_df['active_patients'] = df[column] - df[country + '_deaths'] - df[country + '_recovered']
+                
                 res_df['fastest_grow_day'] = t_fastest
                 res_df['fastest_grow_value'] = i_fastest
                 res_df['growth_stabilized'] = t_fastest <= x[-1]
@@ -113,7 +118,7 @@ def detect_growth(input_file, output_file, backtesting):
 # detect_growth('data/covid19_data_backtesting.csv', 'data/covid19_processed_backtesting_data_', True)
 
 
-# In[10]:
+# In[15]:
 
 
 def construct_hill_growth(input_file, country, backtesting):
@@ -132,6 +137,12 @@ def construct_hill_growth(input_file, country, backtesting):
             # Set min bound 0 on all coefficients, and set different max bounds for each coefficient
             coeff1 = 1000000.
             if country == 'USA_cases':
+                coeff1 = 1000000000.
+            if country == 'Brazil_cases':
+                coeff1 = 1000000000.
+            if country == 'Russia_cases':
+                coeff1 = 1000000000.
+            if country == 'India_cases':
                 coeff1 = 1000000000.
                 
             bounds = (0, [coeff1, 100., 1000.])
@@ -213,6 +224,7 @@ def build_model(country):
             res_df = res_df.set_index('ds')[['yhat', 'yhat_lower', 'yhat_upper', 'y', 'y_hill', 'y_hill_b1']].join(forecast_b1.set_index('ds')[['yhat_b1', 'yhat_b1_lower', 'yhat_b1_upper']]).reset_index()
         
         res_df['current_date'] = df['ds'].iloc[-1]
+        res_df['active_patients'] = df_['active_patients']
         res_df['fastest_growth_day'] = df_['fastest_grow_day'].iloc[-1]
         res_df['growth_stabilized'] = df_['growth_stabilized'].iloc[-1]
         res_df['current_day'] = df_['timestep'].iloc[-1]

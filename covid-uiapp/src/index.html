@@ -88,7 +88,7 @@
         </template>
         <template slot="seriesTemplate" data-oj-as="series">
           <oj-chart-series
-            color="[[series.id === 'Actual Infections' ? '#cc3232' : series.id === 'Forecast Logistic' ? '#db7b2b' : series.id === 'Forecast Hill' ? '#b89011' : series.id === 'Forecast Hill Backtest' ? '#b89011' : series.id === 'Forecast Logistic Backtest' ? '#db7b2b' : null]]"
+            color="[[series.id === 'Actual Infections' ? '#cc3232' : series.id === 'Forecast Logistic' ? '#db7b2b' : series.id === 'Forecast Hill' ? '#b89011' : series.id === 'Forecast Hill Backtest' ? '#b89011' : series.id === 'Forecast Logistic Backtest' ? '#db7b2b' : series.id === 'Active Patients' ? '#6F6FDB' : null]]"
             line-style="[[series.id === 'Forecast Hill Backtest' ? 'dashed': series.id === 'Forecast Logistic Backtest' ? 'dashed': null]]">
           </oj-chart-series>
         </template>

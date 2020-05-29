@@ -11,7 +11,8 @@ define(['ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'knockout', 'o
   function (ResponsiveUtils, ResponsiveKnockoutUtils, ko, ArrayDataProvider, DateTimeConverter) {
     function ControllerViewModel() {
       var self = this;
-      let baseURL = 'https://app.katanaml.io/katana-ml/api/v1.0/forecast/covid19';
+      // let baseURL = 'https://app.katanaml.io/katana-ml/api/v1.0/forecast/covid19';
+      let baseURL = 'http://127.0.0.1:3000/katana-ml/api/v1.0/forecast/covid19';
 
       let dateConverter = new DateTimeConverter.IntlDateTimeConverter(
         {
@@ -153,6 +154,8 @@ define(['ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'knockout', 'o
                 self.covid19Forecast.push({ "id": idCovid19, "date": item.ds, "series": "Forecast Hill Backtest", "value": item.y_hill_b1 });
                 idCovid19 = idCovid19 + 1;
                 self.covid19Forecast.push({ "id": idCovid19, "date": item.ds, "series": "Actual Infections", "value": item.y });
+                idCovid19 = idCovid19 + 1;
+                self.covid19Forecast.push({ "id": idCovid19, "date": item.ds, "series": "Active Patients", "value": item.active_patients });
                 idCovid19 = idCovid19 + 1;
                 itemsRangeForecastProphet.push({ low: item.yhat_lower, high: item.yhat_upper });
                 itemsRangeForecastProphetBacktest.push({ low: item.yhat_b1_lower, high: item.yhat_b1_upper });
