@@ -144,6 +144,32 @@ def construct_hill_growth(input_file, country, backtesting):
                 coeff1 = 1000000000.
             if country == 'India_cases':
                 coeff1 = 1000000000.
+            if country == 'France_cases':
+                coeff1 = 1000000000.
+            if country == 'Spain_cases':
+                coeff1 = 1000000000.
+            if country == 'UK_cases':
+                coeff1 = 1000000000.
+            if country == 'Italy_cases':
+                coeff1 = 1000000000.
+            if country == 'Argentina_cases':
+                coeff1 = 1000000000.
+            if country == 'Colombia_cases':
+                coeff1 = 1000000000.
+            if country == 'Mexico_cases':
+                coeff1 = 1000000000.
+            if country == 'Peru_cases':
+                coeff1 = 1000000000.
+            if country == 'Germany_cases':
+                coeff1 = 1000000000.
+            if country == 'Poland_cases':
+                coeff1 = 1000000000.
+            if country == 'Iran_cases':
+                coeff1 = 1000000000.
+            if country == 'South Africa_cases':
+                coeff1 = 1000000000.
+            if country == 'Ukraine_cases':
+                coeff1 = 1000000000.
                 
             bounds = (0, [coeff1, 100., 1000.])
 
