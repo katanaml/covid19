@@ -10,7 +10,7 @@
 
   <!-- This is the main css file for the default Alta theme -->
   <!-- injector:theme -->
-  <link rel="stylesheet" href="css/libs/oj/v8.1.0/alta/oj-alta-min.css" type="text/css" />
+  <link rel="stylesheet" href="css/libs/oj/v9.2.0/alta/oj-alta-min.css" type="text/css" />
   <!-- endinjector -->
   <!-- This contains icon fonts used by the starter template -->
   <link rel="stylesheet" href="css/demo-alta-site-min.css" type="text/css" />
@@ -22,7 +22,7 @@
 <body class="oj-web-applayout-body">
   <div id="globalBody" class="oj-web-applayout-page">
     <!--
-         ** Oracle JET V8.1.0 web application header pattern.
+         ** Oracle JET V9.2.0 web application header pattern.
          ** Please see the demos under Cookbook/Patterns/App Shell: Web
          ** and the CSS documentation under Support/API Docs/Non-Component Styling
          ** on the JET website for more information on how to use this pattern.
@@ -70,6 +70,11 @@
           </div>
         </div>
         <div class="oj-flex-bar-middle">
+          <div style="padding-left:10px">
+            <oj-input-date id="sdate" value='{{dateFrom}}' style="max-width: 12rem" label-hint="From Date" label-edge='inside'
+            converter="[[uiDateConverter]]" min="2020-01-01" max="[[dateTo]]">
+            </oj-input-date>
+          </div>
           <div style="padding-left:10px">
             <oj-led-gauge id="countryPerf" title="Yellow - stabilized, Red - increasing" color="[[colorGauge]]"
               value="{{thresholdValue}}" min="0" max="100" metric-label.rendered="off" style="width:40px;height:40px;">

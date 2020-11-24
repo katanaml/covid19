@@ -7,17 +7,17 @@
  * Your application specific code will go here
  */
 define(['ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'knockout', 'ojs/ojarraydataprovider', 'ojs/ojconverter-datetime',
-  'ojs/ojknockout', 'ojs/ojchart', 'ojs/ojselectcombobox', 'ojs/ojgauge'],
-  function (ResponsiveUtils, ResponsiveKnockoutUtils, ko, ArrayDataProvider, DateTimeConverter) {
+  'ojs/ojconverterutils-i18n', 'ojs/ojknockout', 'ojs/ojchart', 'ojs/ojselectcombobox', 'ojs/ojgauge', 'ojs/ojdatetimepicker'],
+  function (ResponsiveUtils, ResponsiveKnockoutUtils, ko, ArrayDataProvider, DateTimeConverter, ConverterUtilsI18n) {
     function ControllerViewModel() {
       var self = this;
-      // let baseURL = 'https://app.katanaml.io/katana-ml/api/v1.0/forecast/covid19';
-      let baseURL = 'http://127.0.0.1:3000/katana-ml/api/v1.0/forecast/covid19';
+      let baseURL = 'https://app.katanaml.io/katana-ml/api/v1.0/forecast/covid19';
 
       let dateConverter = new DateTimeConverter.IntlDateTimeConverter(
         {
           pattern: 'dd/MM/yyyy'
         });
+      self.uiDateConverter = ko.observable(dateConverter);
       self.headerTitle = ko.observable('CURRENT SITUATION');
       self.lastAvailableDate = ko.observable();
 
@@ -35,9 +35,16 @@ define(['ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'knockout', 'o
       self.xAxisData = ko.observable();
       self.yAxisDataForecast = ko.observable();
 
+      self.dateFrom = ko.observable(ConverterUtilsI18n.IntlConverterUtils.dateToLocalIso(new Date(2020, 0, 1)));
+      self.dateTo = ko.observable();
+
       self.currentCountry.subscribe(function (newValue) {
-        self.fetchStatsPerCountry(newValue);
+        self.fetchStatsPerCountry(newValue, self.dateFrom());
       });
+
+      self.dateFrom.subscribe(function (newValue) {
+        self.fetchStatsPerCountry(self.currentCountry(), newValue);
+      })
 
       self.fetchAllStats = function () {
         let fetchURL = baseURL + '/stats';
@@ -85,7 +92,7 @@ define(['ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'knockout', 'o
       }
       self.fetchAllCountries();
 
-      self.fetchStatsPerCountry = function (country) {
+      self.fetchStatsPerCountry = function (country, dateFrom) {
         let fetchURL = baseURL;
         fetch(fetchURL, {
           method: 'post',
@@ -108,7 +115,7 @@ define(['ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'knockout', 'o
             let fastestGrowthDate = null;
             self.lastAvailableDate(dateConverter.format(data[0].current_date));
             self.headerTitle('CURRENT SITUATION - ' + self.lastAvailableDate());
-            let expectedTop = data[0].cap;
+            //let expectedTop = data[0].cap;
             if (data[0].growth_stabilized === true) {
               self.thresholdValue(70);
               self.colorGauge('#e7b416');
@@ -124,6 +131,7 @@ define(['ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'knockout', 'o
               fastestGrowthDate = data[fastestGrowthDay - 1].ds;
             }
             lastDate = new Date(data[0].current_date);
+            self.dateTo(ConverterUtilsI18n.IntlConverterUtils.dateToLocalIso(lastDate));
 
             if (fastestGrowthDate === null) {
               let constantLineX = {
@@ -134,31 +142,42 @@ define(['ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'knockout', 'o
               self.xAxisData(constantLineX);
             } else {
               fastestGrowthDate = new Date(fastestGrowthDate);
-              let constantLineX = {
-                referenceObjects: [
-                  { text: 'Last Available Day', type: 'line', value: lastDate, color: '#000000', displayInLegend: 'on', lineWidth: 2, location: 'back', lineStyle: 'dashed', shortDesc: 'Last Available Day' },
-                  { text: 'Fastest Growth Day', type: 'line', value: fastestGrowthDate, color: '#cc3232', displayInLegend: 'on', lineWidth: 2, location: 'back', lineStyle: 'line', shortDesc: 'Fastest Growth Day' }
-                ]
-              };
-              self.xAxisData(constantLineX);
+              if (fastestGrowthDate > new Date(dateFrom)) {
+                let constantLineX = {
+                  referenceObjects: [
+                    { text: 'Last Available Day', type: 'line', value: lastDate, color: '#000000', displayInLegend: 'on', lineWidth: 2, location: 'back', lineStyle: 'dashed', shortDesc: 'Last Available Day' },
+                    { text: 'Fastest Growth Day', type: 'line', value: fastestGrowthDate, color: '#cc3232', displayInLegend: 'on', lineWidth: 2, location: 'back', lineStyle: 'line', shortDesc: 'Fastest Growth Day' }
+                  ]
+                };
+                self.xAxisData(constantLineX);
+              } else {
+                let constantLineX = {
+                  referenceObjects: [
+                    { text: 'Last Available Day', type: 'line', value: lastDate, color: '#000000', displayInLegend: 'on', lineWidth: 2, location: 'back', lineStyle: 'dashed', shortDesc: 'Last Available Day' }
+                  ]
+                };
+                self.xAxisData(constantLineX);
+              }
             }
 
             data.forEach(function (item) {
-              if (item.y > 0 || item.y === null) {
-                self.covid19Forecast.push({ "id": idCovid19, "date": item.ds, "series": "Forecast Logistic", "value": item.yhat });
-                idCovid19 = idCovid19 + 1;
-                self.covid19Forecast.push({ "id": idCovid19, "date": item.ds, "series": "Forecast Logistic Backtest", "value": item.yhat_b1 });
-                idCovid19 = idCovid19 + 1;
-                self.covid19Forecast.push({ "id": idCovid19, "date": item.ds, "series": "Forecast Hill", "value": item.y_hill });
-                idCovid19 = idCovid19 + 1;
-                self.covid19Forecast.push({ "id": idCovid19, "date": item.ds, "series": "Forecast Hill Backtest", "value": item.y_hill_b1 });
-                idCovid19 = idCovid19 + 1;
-                self.covid19Forecast.push({ "id": idCovid19, "date": item.ds, "series": "Actual Infections", "value": item.y });
-                idCovid19 = idCovid19 + 1;
-                self.covid19Forecast.push({ "id": idCovid19, "date": item.ds, "series": "Active Patients", "value": item.active_patients });
-                idCovid19 = idCovid19 + 1;
-                itemsRangeForecastProphet.push({ low: item.yhat_lower, high: item.yhat_upper });
-                itemsRangeForecastProphetBacktest.push({ low: item.yhat_b1_lower, high: item.yhat_b1_upper });
+              if (new Date(item.ds) > new Date(dateFrom)) {
+                if (item.y > 0 || item.y === null) {
+                  self.covid19Forecast.push({ "id": idCovid19, "date": item.ds, "series": "Forecast Logistic", "value": item.yhat });
+                  idCovid19 = idCovid19 + 1;
+                  self.covid19Forecast.push({ "id": idCovid19, "date": item.ds, "series": "Forecast Logistic Backtest", "value": item.yhat_b1 });
+                  idCovid19 = idCovid19 + 1;
+                  self.covid19Forecast.push({ "id": idCovid19, "date": item.ds, "series": "Forecast Hill", "value": item.y_hill });
+                  idCovid19 = idCovid19 + 1;
+                  self.covid19Forecast.push({ "id": idCovid19, "date": item.ds, "series": "Forecast Hill Backtest", "value": item.y_hill_b1 });
+                  idCovid19 = idCovid19 + 1;
+                  self.covid19Forecast.push({ "id": idCovid19, "date": item.ds, "series": "Actual Infections", "value": item.y });
+                  idCovid19 = idCovid19 + 1;
+                  self.covid19Forecast.push({ "id": idCovid19, "date": item.ds, "series": "Active Patients", "value": item.active_patients });
+                  idCovid19 = idCovid19 + 1;
+                  itemsRangeForecastProphet.push({ low: item.yhat_lower, high: item.yhat_upper });
+                  itemsRangeForecastProphetBacktest.push({ low: item.yhat_b1_lower, high: item.yhat_b1_upper });
+                }
               }
             });
 
@@ -169,10 +188,10 @@ define(['ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'knockout', 'o
               },
               {
                 text: 'Forecast Range Backtest', type: 'area', items: itemsRangeForecastProphetBacktest, color: '#f7e4d4', displayInLegend: 'on', location: 'back', shortDesc: 'Forecast Range Backtest'
-              },
-              {
-                text: 'Expected Maximum', type: 'line', value: expectedTop, color: '#000000', displayInLegend: 'on', lineWidth: 1, location: 'back', lineStyle: 'dashed', shortDesc: 'Expected Maximum'
               }]
+              // {
+              //   text: 'Expected Maximum', type: 'line', value: expectedTop, color: '#000000', displayInLegend: 'on', lineWidth: 1, location: 'back', lineStyle: 'dashed', shortDesc: 'Expected Maximum'
+              // }]
             };
             self.yAxisDataForecast(variedAreaForecastY);
 
@@ -181,7 +200,7 @@ define(['ojs/ojresponsiveutils', 'ojs/ojresponsiveknockoututils', 'knockout', 'o
           console.log('Fetch Error :-S', err);
         })
       }
-      self.fetchStatsPerCountry('Lithuania_cases');
+      self.fetchStatsPerCountry('Lithuania_cases', dateConverter.format(self.dateFrom()));
 
       // Footer
       function footerLink(name, id, linkTarget) {

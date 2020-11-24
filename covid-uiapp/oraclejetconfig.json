@@ -16,5 +16,8 @@
     }
   },
   "defaultBrowser": "chrome",
-  "generatorVersion": "8.1.0"
+  "sassVer": "4.13.0",
+	"defaultTheme": "alta",
+	"defaultCssvars": "disabled",
+	"generatorVersion": "9.2.0"
 }
